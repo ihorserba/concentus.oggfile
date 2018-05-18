@@ -23,12 +23,13 @@ namespace Concentus.Oggfile
         private string _lastError;
 
         /// <summary>
-        /// Builds an Ogg file reader that decodes Opus packets from the given input stream, using a 
+        /// Builds an Ogg file reader that decodes Opus packets from the given input stream, using a
         /// specified output sample rate and channel count. The given decoder will be used as-is
         /// and return the decoded PCM buffers directly.
         /// </summary>
         /// <param name="decoder">An Opus decoder. If you are reusing an existing decoder, remember to call Reset() on it before
-        /// processing a new stream. The decoder is optional for cases where you may only be interested in the file tags</param>
+        /// processing a new stream. The decoder is optional for cases where you may only be interested in the file tags or the
+        /// encoded opus data</param>
         /// <param name="oggFileInput">The input stream for an Ogg formatted .opus file. The stream will be read from immediately</param>
         public OpusOggReadStream(OpusDecoder decoder, Stream oggFileInput)
         {
@@ -79,6 +80,28 @@ namespace Concentus.Oggfile
             {
                 return _lastError;
             }
+        }
+
+        /// <summary>
+        /// Reads the next packet from the Ogg stream and returns it.
+        /// If there are no more packets to decode, this returns NULL.
+        /// </summary>
+        /// <returns>The next opus encoded packet in the stream, or NULL</returns>
+        public byte[] RetrieveNextPacket()
+        {
+            if (_nextDataPacket == null || _nextDataPacket.Length == 0)
+            {
+                _endOfStream = true;
+            }
+
+            if (_endOfStream)
+            {
+                return null;
+            }
+
+            var result = _nextDataPacket;
+            QueueNextPacket();
+            return _nextDataPacket;
         }
 
         /// <summary>
