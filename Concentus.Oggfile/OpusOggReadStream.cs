@@ -18,6 +18,7 @@ namespace Concentus.Oggfile
         private byte[] _nextDataPacket;
         private OpusDecoder _decoder;
         private OpusTags _tags;
+        private OpusHeader _header;
         private IPacketProvider _packetProvider;
         private bool _endOfStream;
         private string _lastError;
@@ -55,6 +56,17 @@ namespace Concentus.Oggfile
             get
             {
                 return _tags;
+            }
+        }
+
+        /// <summary>
+        /// Gets the input sample rate from the header from the OpusHead Ogg packet.
+        /// </summary>
+        public uint InputSampleRate
+        {
+            get
+            {
+                return _header.input_sample_rate;
             }
         }
 
@@ -207,6 +219,7 @@ namespace Concentus.Oggfile
 
             if (buf.Length > 8 && "OpusHead".Equals(Encoding.UTF8.GetString(buf, 0, 8)))
             {
+                _header = OpusHeader.ParsePacket(buf, buf.Length);
                 QueueNextPacket();
             }
             else if (buf.Length > 8 && "OpusTags".Equals(Encoding.UTF8.GetString(buf, 0, 8)))
