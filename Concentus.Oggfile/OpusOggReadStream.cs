@@ -66,6 +66,9 @@ namespace Concentus.Oggfile
         {
             get
             {
+                if (_header == null) {
+                    return 0;
+                }
                 return _header.input_sample_rate;
             }
         }
@@ -113,7 +116,7 @@ namespace Concentus.Oggfile
 
             var result = _nextDataPacket;
             QueueNextPacket();
-            return _nextDataPacket;
+            return result;
         }
 
         /// <summary>

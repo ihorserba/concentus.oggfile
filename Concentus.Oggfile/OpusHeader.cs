@@ -25,21 +25,21 @@ namespace Concentus.Oggfile
             if (!"OpusHead".Equals(Encoding.UTF8.GetString(packet, 0, 8)))
                 return null;
 
-            OpusHeader returnVal = new OpusHeader();
+            OpusHeader header = new OpusHeader();
             
-            returnVal.version = packet[8];
-            returnVal.channel_count = packet[9];
+            header.version = packet[8];
+            header.channel_count = packet[9];
             if (!BitConverter.IsLittleEndian) {
                 Array.Reverse(packet, 10, 2);
                 Array.Reverse(packet, 12, 4);
                 Array.Reverse(packet, 16, 2);
             }
-            returnVal.pre_skip = BitConverter.ToUInt16(packet, 10);
-            returnVal.input_sample_rate = BitConverter.ToUInt32(packet, 12);
-            returnVal.output_gain = BitConverter.ToInt16(packet, 16);
-            returnVal.mapping_family = packet[18];
+            header.pre_skip = BitConverter.ToUInt16(packet, 10);
+            header.input_sample_rate = BitConverter.ToUInt32(packet, 12);
+            header.output_gain = BitConverter.ToInt16(packet, 16);
+            header.mapping_family = packet[18];
 
-            return returnVal;
+            return header;
         }
     }
 }
