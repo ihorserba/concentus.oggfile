@@ -116,7 +116,6 @@ namespace Concentus.Oggfile
 
             var result = _nextDataPacket;
             QueueNextPacket();
-
             return result;
         }
 
